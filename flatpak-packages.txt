@@ -17,7 +17,6 @@ com.belmoussaoui.Authenticator
 dev.lizardbyte.app.Sunshine
 com.vivaldi.Vivaldi
 io.github.Qalculate
-org.videolan.VLC
 com.github.IsmaelMartinez.teams_for_linux
 de.schmidhuberj.tubefeeder
 com.chatterino.chatterino

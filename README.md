@@ -1,70 +1,55 @@
 <h1 align="center">
-  Fedorable - a post install helper script for the GNOME desktop environment.
+  Fedorable - a post install helper script (thx smittix).
 </h1>
-<p align="center">
-  <img width="300" height="300" src="logo.png">
-</p>
 
 ## What's all this then?
-
-Fedorable is a personal script I created to help with post install tasks such as tweaks and software installs. It's written in Bash and utilises Dialog for a friendlier menu system. 
-
-It is fully customisable by the user by either editing the script itself or changing the package selections within the flatpak-packages.txt or dnf-packages.txt files.
+Fedora-Setup is a personal script I created to help with post install tasks such as tweaks and software installs. It's written in Bash and utilises Dialog for a friendlier menu system.
 
 Dialog must be installed for the menu system to work and as such the script will check to see if Dialog is installed. If not, it will ask you to install it.
 
-Scripts for Cinnamon and KDE will become available in the future.
+## Notices
+- Export oh my posh theme with `oh-my-posh config export --output ./path.toml`
+- Customization
+	- Theme Lisa
+	- Window decoration edit `Button size - Large`
+	- Icons Tela purple light
+	- No sounds
+	- No Splashscreen
+	- Terminal Setting: Profil, Solarized - Transparenz: 20%, Font Meslo Nerd Font
+- Have an eye on https://github.com/emvaized/kde-snap-assist
+- Geany save action Plugin, see Pr: https://github.com/geany/geany/pull/3911
+- Vivaldi flickering fix
+	- type in address bar `vivaldi://flags`
+	- search for `Ozone` - Preferred Ozone platform
+	- Switch to Auto
+- If there is a second rive mounted in mnt/drive_name
+	- Go to Flatseal and enable Filesystem access to the mount point
+		- Filesystem > Other files > All system files
+	- Same for Signal user files
 
 ## Usage
-1. Set the script to be executable `chmod -x fedorable.sh`
+1. Set the script to be executable `chmod +x fedorable.sh`
 2. Run the script `./fedorable.sh`
 3. Enter user password when required (for installation of packages)
 
 ## Files
-
 - **flatpak-packages.txt** - This file contains a list of all flat packages to install you can customise this with your choice of applications by application-id.
 - **dnf-packages.txt** - This file contains a list of all applications that will be installed via the Fedora and RPMFusion repositories.
+- **dnf-remove-packages.txt** - This file contains a list of all applications that will be removed via the Fedora and RPMFusion repositories.
 
-## Screenshot
-![Screenshot](screenshot.png)
 # Options
-
 - ## Enable RPM Fusion
   - Enables RPM Fusion repositories using the official method from the RPM Fusion website. - [RPM Fusion](https://rpmfusion.org)
   > RPM Fusion provides software that the Fedora Project or Red Hat doesn't want to ship. That software is provided as precompiled RPMs for all current Fedora versions and current Red Hat Enterprise Linux or clones versions; you can use the RPM Fusion repositories with tools like yum and PackageKit.
 - ## Update Firmware
-  - **Updates firmware providing you have hardwar that supports it.**
+  - **Updates firmware providing you have hardware that supports it.**
 - ## Speed up DNF
   - **Sets max parallel downloads to 10**
 - ## Enable Flatpak and Packages
-  ### Adds the flatpak repo, updates and installs the following packages (or what you have specified in flatpak-packages.txt)
-  - **Signal Desktop** - [A cross platform secure messaging service](https://signal.org/en/download/)
-  - **Obsidian** - [Obsidian is the private and flexible writing app that adapts to the way you think](https://obsidian.md/)
-  - **Amberol** - [Amberol is a music player with no delusions of grandeur. If you just want to play music available on your local system then Amberol is the music player you are looking for.](https://apps.gnome.org/en-GB/Amberol/)
-  - **Discord** - [The popular VoIP, IM and Social platform](https://discord.com)
-  - **OrbVis** - [OrbVis is a real-time satellite tracking and visualisation application](https://github.com/wojciech-graj/OrbVis)
-  - **Element** - [Decentralised, encrypted chat & collaboration powered by Matrix](https://element.io/)
-  - **Spotify** - [Spotify is a digital music, podcast, and video service](https://spotify.com)
+  ### Adds the flatpak repo, updates and installs the packages specified in flatpak-packages.txt
 - ## Install Software
-  ### Installs the following pieces of software (or the applications you specify in dnf-packages.txt)
-    - **neofetch** - [CLI system information tool](http://www.figlet.org/)
-    - **btop** - [CLI based system monitor](https://github.com/aristocratos/btop)
-    - **gnome-extensions-app** - [GNOME extension management application](https://gitlab.gnome.org/GNOME/gnome-tweaks)
-    - **gnome-tweaks** - [GNOME Tweak Tool](https://github.com/GNOME/gnome-tweaks)
-    - **vlc**  - [A cross platform multimedia player](https://www.videolan.org/)
-    - **p7zip** - [High compression archiving application](https://p7zip.sourceforge.net/)
-    - **gimp** - [GNU Image Manipulation Program](https://gimp.org)
-    - **libreoffice** - [Free and popular office suite with high compatibility to MS Office formats](https://www.libreoffice.org/)
-    - **obs-studio** - [Free and open source software for video recording and live streaming](https://obsproject.com/)
-    - **qBitorrent** - [The qBittorrent project aims to provide an open-source software alternative to µTorrent](https://www.qbittorrent.org/)
-    - **Solaar** - [Linux Device Manager for Logitech Unifying Receivers and Devices](https://pwr-solaar.github.io/Solaar/)
-    - **imhex** - [ImHex is a Hex Editor, a tool to display, decode and analyze binary data to reverse engineer their format, extract informations or patch values in them.](https://imhex.werwolv.net/)
-    - **gpredict** - [Gpredict is a real time satellite tracking and orbit prediction program for the Linux desktop](https://github.com/csete/gpredict)
-    - **kdenlive** - [Free and Open Source Video Editor](https://kdenlive.org/en/)
-- ## Install Oh-My-ZSH with StarShip Prompt
-  - **Installs Oh-My-Zsh** - [A ZSH configuration management framework](https://ohmyz.sh/)
-  - **Installs the Starship prompt for ZSH** - [A popular cross-shell highly customisable prompt](https://starship.rs/)
-  
+  ### Installs the following pieces of software specify in dnf-packages.txt
+- ## Install Oh-My-Posh
 - ## Install Extras
   ### Installs the following fonts
     - **iosevka-term-fonts** - [Iosevka Font](https://github.com/be5invis/Iosevka)
@@ -80,3 +65,9 @@ Scripts for Cinnamon and KDE will become available in the future.
     - **gstreamer plugins** - [a framework for streaming media](https://github.com/GStreamer/gstreamer)
   ### Install Nvidia
     - **Installs the akmod-nvidia driver from the RPMFusion repo's** - [An akmod is a type of package similar to dkms. As you start your computer, the akmod system will check if there are any missing kmods and if so, rebuild a new kmod for you. Akmods have more overhead than regular kmod packages as they require a few development tools such as gcc and automake in order to be able to build new kmods locally](https://rpmfusion.org/Howto/NVIDIA#Akmods)
+- ## Remove Software
+  ### Removes libre office and packages specified in dnf-remove-packages.txt
+- ## Install XBOX
+  ### Install XBOX drivers for wireless Controller with dongle
+- ## Configure Git
+  ## Prompt to enter git username and email

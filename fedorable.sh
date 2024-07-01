@@ -45,7 +45,7 @@ OPTIONS=(
     6 "Install Oh-My-Posh - Installs Zsh & Oh-My-Posh"
     7 "Install Extras - Themes, Fonts, and Codecs"
     8 "Install Nvidia - Install akmod Nvidia drivers"
-	9 "Remove Software - Removes libre office and packages located in dnf-remove-packages.txt"
+	9 "Remove Software - Removes libre office and packages specified in dnf-remove-packages.txt"
 	10 "Install XBOX - Install XBOX drivers for wireless Controller with dongle"
 	11 "Configure Git - Setting username and email"
     12 "Quit"
