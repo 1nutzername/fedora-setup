@@ -70,4 +70,4 @@ Dialog must be installed for the menu system to work and as such the script will
 - ## Install XBOX
   ### Install XBOX drivers for wireless Controller with dongle
 - ## Configure Git
-  ## Prompt to enter git username and email
+  ### Prompt to enter git username and email
