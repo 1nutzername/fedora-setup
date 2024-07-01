@@ -1,14 +1,9 @@
 #!/bin/bash
 
-# Set PATH
 PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/snap/bin
-
-# Dialog dimensions
 HEIGHT=20
 WIDTH=90
 CHOICE_HEIGHT=10
-
-# Titles and messages
 BACKTITLE="Fedorable - A Fedora Post Install Setup Util for GNOME - By Smittix - https://lsass.co.uk"
 TITLE="Please Make a Selection"
 MENU="Please Choose one of the following options:"
@@ -30,21 +25,6 @@ if ! rpm -q dialog &>/dev/null; then
     log_action "Installed dialog."
 fi
 
-# Options for the menu
-OPTIONS=(
-    1 "Enable RPM Fusion - Enables the RPM Fusion repos for your specific version"
-    2 "Update Firmware - If your system supports FW update delivery"
-    3 "Speed up DNF - Sets max parallel downloads to 10"
-    4 "Enable Flatpak - Enables the Flatpak repo and installs packages located in flatpak-packages.txt"
-    5 "Install Software - Installs software located in dnf-packages.txt"
-    6 "Install Oh-My-Posh - Installs Zsh & Oh-My-Posh"
-    7 "Install Extras - Themes, Fonts, and Codecs"
-    8 "Install Nvidia - Install akmod Nvidia drivers"
-	9 "Remove Software - Removes libre office and packages located in dnf-remove-packages.txt"
-	10 "Install XBOX - Downloads XBOX W kernel drivers"
-	11 "Configure Git - Setting username and email"
-    12 "Quit"
-)
 
 # Function to display notifications
 notify() {
@@ -56,137 +36,20 @@ notify() {
     log_action "$message"
 }
 
-# Function to handle RPM Fusion setup
-enable_rpm_fusion() {
-    echo "Enabling RPM Fusion"
-    sudo dnf install -y \
-        https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm \
-        https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm
-    sudo dnf upgrade --refresh -y
-    sudo dnf groupupdate -y core
-    sudo dnf install -y rpmfusion-free-release-tainted dnf-plugins-core
-    notify "RPM Fusion Enabled"
-}
-
-# Function to update firmware
-update_firmware() {
-    echo "Updating System Firmware"
-    sudo fwupdmgr get-devices
-    sudo fwupdmgr refresh --force
-    sudo fwupdmgr get-updates
-    sudo fwupdmgr update
-    notify "System Firmware Updated"
-}
-
-# Function to speed up DNF
-speed_up_dnf() {
-    echo "Speeding Up DNF"
-    echo 'max_parallel_downloads=10' | sudo tee -a /etc/dnf/dnf.conf
-    notify "Your DNF config has now been amended"
-}
-
-# Function to enable Flatpak
-enable_flatpak() {
-    echo "Enabling Flatpak"
-    flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
-    flatpak update -y
-    if [ -f flatpak-install.sh ]; then
-        source flatpak-install.sh
-    else
-        log_action "flatpak-install.sh not found"
-    fi
-    notify "Flatpak has now been enabled"
-}
-
-# Function to install software
-install_software() {
-    echo "Installing Software"
-	sudo dnf config-manager --add-repo https://download.docker.com/linux/fedora/docker-ce.repo
-    if [ -f dnf-packages.txt ]; then
-        sudo dnf install -y $(cat dnf-packages.txt)
-        notify "Software has been installed"
-    else
-        log_action "dnf-packages.txt not found"
-    fi
-}
-
-# Function to remove software
-remove_software() {
-    echo "Removing Software"
-	sudo dnf group remove libreoffice
-	sudo dnf remove libreoffice-core
-    if [ -f dnf-remove-packages.txt ]; then
-        sudo dnf remove -y "$DNF_REMOVE_PACKAGES"
-        notify "Software has been installed"
-    else
-        log_action "dnf-remove-packages.txt not found"
-    fi
-}
-
-# Function to install zsh and Oh-My-Posh
-install_oh_my_posh() {
-    echo "Installing Oh-My-Posh"
-	mkdir $HOME/.config/omp
-	cp omp_theme.toml $HOME/.config/omp/omp_theme.toml
-    sudo dnf install -y zsh curl util-linux-user
-	chsh -s "$which zsh"
-	autoload -Uz zsh-newuser-install
-	zsh-newuser-install -f 
-	curl -s https://ohmyposh.dev/install.sh | sudo bash -s
-	echo 'eval "$(oh-my-posh init zsh --config $HOME/.config/omp/omp_theme.toml)"' >> ~/.zshrc
-	oh-my-posh font install meslo
-
-    notify "Oh-My-Posh is ready to rock n roll"
-}
-
-# Function to install extras
-install_extras() {
-    echo "Installing Extras"
-    sudo dnf groupupdate -y sound-and-video
-    sudo dnf swap -y ffmpeg-free ffmpeg --allowerasing
-    sudo dnf install -y libdvdcss
-    sudo dnf install -y gstreamer1-plugins-{bad-\*,good-\*,ugly-\*,base} gstreamer1-libav --exclude=gstreamer1-plugins-bad-free-devel ffmpeg gstreamer-ffmpeg
-    sudo dnf install -y lame\* --exclude=lame-devel
-    sudo dnf group upgrade -y --with-optional Multimedia
-    sudo dnf config-manager --set-enabled fedora-cisco-openh264
-    sudo dnf install -y gstreamer1-plugin-openh264 mozilla-openh264
-    sudo dnf copr enable peterwu/iosevka -y
-    sudo dnf update -y
-    sudo dnf install -y iosevka-term-fonts jetbrains-mono-fonts-all terminus-fonts terminus-fonts-console google-noto-fonts-common fira-code-fonts cabextract xorg-x11-font-utils fontconfig
-    sudo rpm -i https://downloads.sourceforge.net/project/mscorefonts2/rpms/msttcore-fonts-installer-2.6-1.noarch.rpm
-    notify "All done"
-}
-
-# Function to install Nvidia drivers
-install_nvidia() {
-    echo "Installing Nvidia Driver Akmod-Nvidia"
-    sudo dnf install -y akmod-nvidia
-    notify "Please wait 5 minutes until rebooting"
-}
-
-# Function to install git and set it up
-configure_git() {
-    echo "Setting up git"
-	sudo dnf install -y git-core
-	echo "Please enter user.name"
-	read username
-	echo "Please enter user.email"
-	read email
-	git config --global user.name "$username"
-	git config --global user.email "$email"
-    notify "Git is ready to go"
-}
-
-# FUnction to install xbox dongle firmware
-install_xbox() {
-	sudo dnf install -y dkms cabextract git-core
-	cd ~/Downloads
-	git clone https://github.com/medusalix/xone
-	cd xone
-	sudo ./install.sh
-	sudo xone-get-firmware.sh
-	notify "XBOX Dongle drivers installed"
-}
+OPTIONS=(
+    1 "Enable RPM Fusion - Enables the RPM Fusion repos for your specific version"
+    2 "Update Firmware - If your system supports FW update delivery"
+    3 "Speed up DNF - Sets max parallel downloads to 10"
+    4 "Enable Flatpak - Enables the Flatpak repo and installs packages located in flatpak-packages.txt"
+    5 "Install Software - Installs software located in dnf-packages.txt"
+    6 "Install Oh-My-Posh - Installs Zsh & Oh-My-Posh"
+    7 "Install Extras - Themes, Fonts, and Codecs"
+    8 "Install Nvidia - Install akmod Nvidia drivers"
+	9 "Remove Software - Removes libre office and packages located in dnf-remove-packages.txt"
+	10 "Install XBOX - Install XBOX drivers for wireless Controller with dongle"
+	11 "Configure Git - Setting username and email"
+    12 "Quit"
+)
 
 # Main loop
 while true; do
@@ -201,18 +64,120 @@ while true; do
 
     clear
     case $CHOICE in
-        1) enable_rpm_fusion ;;
-        2) update_firmware ;;
-        3) speed_up_dnf ;;
-        4) enable_flatpak ;;
-        5) install_software ;;
-        6) install_oh_my_posh ;;
-        7) install_extras ;;
-        8) install_nvidia ;;
-		9) remove_software ;;
-		10) install_xbox ;;
-		11) configure_git ;;
+        1)
+			echo "Enabling RPM Fusion"
+			sudo dnf install -y \
+				https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm \
+				https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm
+			sudo dnf upgrade --refresh -y
+			sudo dnf groupupdate -y core
+			sudo dnf install -y rpmfusion-free-release-tainted dnf-plugins-core
+			notify "RPM Fusion Enabled"
+			;;
+        2)
+			echo "Updating System Firmware"
+			sudo fwupdmgr get-devices
+			sudo fwupdmgr refresh --force
+			sudo fwupdmgr get-updates
+			sudo fwupdmgr update
+			notify "System Firmware Updated"
+			;;
+        3)
+			echo "Speeding Up DNF"
+			echo 'max_parallel_downloads=10' | sudo tee -a /etc/dnf/dnf.conf
+			notify "Your DNF config has now been amended"
+			;;
+        4)
+			echo "Enabling Flatpak"
+			flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+			flatpak update -y
+			if [ -f flatpak-install.sh ]; then
+				source flatpak-install.sh
+			else
+				log_action "flatpak-install.sh not found"
+			fi
+			notify "Flatpak has now been enabled"
+			;;
+        5)
+		    echo "Installing Software"
+			sudo dnf config-manager --add-repo https://download.docker.com/linux/fedora/docker-ce.repo
+			if [ -f dnf-packages.txt ]; then
+				sudo dnf install -y "$DNF_PACKAGES"
+				notify "Software has been installed"
+			else
+				log_action "dnf-packages.txt not found"
+			fi
+			notify	"Software has been installed"
+			;;
+		6)
+			echo "Installing Oh-My-Posh"
+			mkdir $HOME/.config/omp
+			cp omp_theme.toml $HOME/.config/omp/omp_theme.toml
+			sudo dnf install -y zsh curl util-linux-user
+			chsh -s "$which zsh"
+			autoload -Uz zsh-newuser-install
+			zsh-newuser-install -f 
+			curl -s https://ohmyposh.dev/install.sh | sudo bash -s
+			echo 'eval "$(oh-my-posh init zsh --config $HOME/.config/omp/omp_theme.toml)"' >> ~/.zshrc
+			oh-my-posh font install meslo
+			notify "Oh-My-Posh is ready to rock n roll"
+			;;
+		7)
+		    echo "Installing Extras"
+			sudo dnf groupupdate -y sound-and-video
+			sudo dnf swap -y ffmpeg-free ffmpeg --allowerasing
+			sudo dnf install -y libdvdcss
+			sudo dnf install -y gstreamer1-plugins-{bad-\*,good-\*,ugly-\*,base} gstreamer1-libav --exclude=gstreamer1-plugins-bad-free-devel ffmpeg gstreamer-ffmpeg
+			sudo dnf install -y lame\* --exclude=lame-devel
+			sudo dnf group upgrade -y --with-optional Multimedia
+			sudo dnf config-manager --set-enabled fedora-cisco-openh264
+			sudo dnf install -y gstreamer1-plugin-openh264 mozilla-openh264
+			sudo dnf copr enable peterwu/iosevka -y
+			sudo dnf update -y
+			sudo dnf install -y iosevka-term-fonts jetbrains-mono-fonts-all terminus-fonts terminus-fonts-console google-noto-fonts-common fira-code-fonts cabextract xorg-x11-font-utils fontconfig
+			sudo rpm -i https://downloads.sourceforge.net/project/mscorefonts2/rpms/msttcore-fonts-installer-2.6-1.noarch.rpm
+			notify "Extras has been installed"
+			;;
+        8)
+		    echo "Installing Nvidia Driver Akmod-Nvidia"
+			sudo dnf install -y akmod-nvidia
+			notify "Please wait 5 minutes until rebooting"
+			;;
+        9)
+			echo "Removing Software"
+			sudo dnf group remove libreoffice
+			sudo dnf remove libreoffice-core
+			if [ -f dnf-remove-packages.txt ]; then
+				sudo dnf remove -y "$DNF_REMOVE_PACKAGES"
+				notify "Software has been installed"
+			else
+				log_action "dnf-remove-packages.txt not found"
+			fi
+			notify	"Software has been removed"
+			;;
+		10)
+			echo "Installing XBOX drivers for wireless Controller with dongle"
+			sudo dnf install -y dkms cabextract git-core
+			cd ~/Downloads
+			git clone https://github.com/medusalix/xone
+			cd xone
+			sudo ./install.sh
+			sudo xone-get-firmware.sh
+			notify "XBOX Dongle drivers installed"
+			;;
+		11)
+		    echo "Setting up git"
+			sudo dnf install -y git-core
+			echo "Please enter user.name"
+			read username
+			echo "Please enter user.email"
+			read email
+			git config --global user.name "$username"
+			git config --global user.email "$email"
+			notify "Git is ready to go"
+			;;
         12) log_action "User chose to quit the script."; exit 0 ;;
         *) log_action "Invalid option selected: $CHOICE";;
     esac
 done
+
