@@ -1,0 +1,11 @@
+firefox
+kmines
+kpat
+kmahjongg
+kmail
+dragonplayer
+elisa-player
+kaddressbook
+korganizer
+kwrite
+kcalc

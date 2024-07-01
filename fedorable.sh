@@ -14,7 +14,8 @@ TITLE="Please Make a Selection"
 MENU="Please Choose one of the following options:"
 
 # Other variables
-OH_MY_ZSH_URL="https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh"
+DNF_PACKAGES=$(cat dnf-packages.txt | grep --invert-match "#")
+DNF_REMOVE_PACKAGES=$(cat dnf-remove-packages.txt | grep --invert-match "#")
 LOG_FILE="setup_log.txt"
 
 # Log function
@@ -36,10 +37,13 @@ OPTIONS=(
     3 "Speed up DNF - Sets max parallel downloads to 10"
     4 "Enable Flatpak - Enables the Flatpak repo and installs packages located in flatpak-packages.txt"
     5 "Install Software - Installs software located in dnf-packages.txt"
-    6 "Install Oh-My-ZSH - Installs Oh-My-ZSH & Starship Prompt"
+    6 "Install Oh-My-Posh - Installs Zsh & Oh-My-Posh"
     7 "Install Extras - Themes, Fonts, and Codecs"
     8 "Install Nvidia - Install akmod Nvidia drivers"
-    9 "Quit"
+	9 "Remove Software - Removes libre office and packages located in dnf-remove-packages.txt"
+	10 "Install XBOX - Downloads XBOX W kernel drivers"
+	11 "Configure Git - Setting username and email"
+    12 "Quit"
 )
 
 # Function to display notifications
@@ -97,6 +101,7 @@ enable_flatpak() {
 # Function to install software
 install_software() {
     echo "Installing Software"
+	sudo dnf config-manager --add-repo https://download.docker.com/linux/fedora/docker-ce.repo
     if [ -f dnf-packages.txt ]; then
         sudo dnf install -y $(cat dnf-packages.txt)
         notify "Software has been installed"
@@ -105,15 +110,33 @@ install_software() {
     fi
 }
 
-# Function to install Oh-My-Zsh and Starship
-install_oh_my_zsh() {
-    echo "Installing Oh-My-Zsh with Starship"
+# Function to remove software
+remove_software() {
+    echo "Removing Software"
+	sudo dnf group remove libreoffice
+	sudo dnf remove libreoffice-core
+    if [ -f dnf-remove-packages.txt ]; then
+        sudo dnf remove -y "$DNF_REMOVE_PACKAGES"
+        notify "Software has been installed"
+    else
+        log_action "dnf-remove-packages.txt not found"
+    fi
+}
+
+# Function to install zsh and Oh-My-Posh
+install_oh_my_posh() {
+    echo "Installing Oh-My-Posh"
+	mkdir $HOME/.config/omp
+	cp omp_theme.toml $HOME/.config/omp/omp_theme.toml
     sudo dnf install -y zsh curl util-linux-user
-    sh -c "$(curl -fsSL $OH_MY_ZSH_URL)" "" --unattended
-    chsh -s "$(which zsh)"
-    curl -sS https://starship.rs/install.sh | sh
-    echo 'eval "$(starship init zsh)"' >> ~/.zshrc
-    notify "Oh-My-Zsh is ready to rock n roll"
+	chsh -s "$which zsh"
+	autoload -Uz zsh-newuser-install
+	zsh-newuser-install -f 
+	curl -s https://ohmyposh.dev/install.sh | sudo bash -s
+	echo 'eval "$(oh-my-posh init zsh --config $HOME/.config/omp/omp_theme.toml)"' >> ~/.zshrc
+	oh-my-posh font install meslo
+
+    notify "Oh-My-Posh is ready to rock n roll"
 }
 
 # Function to install extras
@@ -141,6 +164,30 @@ install_nvidia() {
     notify "Please wait 5 minutes until rebooting"
 }
 
+# Function to install git and set it up
+configure_git() {
+    echo "Setting up git"
+	sudo dnf install -y git-core
+	echo "Please enter user.name"
+	read username
+	echo "Please enter user.email"
+	read email
+	git config --global user.name "$username"
+	git config --global user.email "$email"
+    notify "Git is ready to go"
+}
+
+# FUnction to install xbox dongle firmware
+install_xbox() {
+	sudo dnf install -y dkms cabextract git-core
+	cd ~/Downloads
+	git clone https://github.com/medusalix/xone
+	cd xone
+	sudo ./install.sh
+	sudo xone-get-firmware.sh
+	notify "XBOX Dongle drivers installed"
+}
+
 # Main loop
 while true; do
     CHOICE=$(dialog --clear \
@@ -159,10 +206,13 @@ while true; do
         3) speed_up_dnf ;;
         4) enable_flatpak ;;
         5) install_software ;;
-        6) install_oh_my_zsh ;;
+        6) install_oh_my_posh ;;
         7) install_extras ;;
         8) install_nvidia ;;
-        9) log_action "User chose to quit the script."; exit 0 ;;
+		9) remove_software ;;
+		10) install_xbox ;;
+		11) configure_git ;;
+        12) log_action "User chose to quit the script."; exit 0 ;;
         *) log_action "Invalid option selected: $CHOICE";;
     esac
 done
