@@ -107,7 +107,7 @@ while true; do
             else
                 log_action "dnf-packages.txt not found"
             fi
-            notify	"Software has been installed"
+            notify "Software has been installed"
             ;;
         6)
             echo "Installing Oh-My-Posh"
@@ -153,7 +153,7 @@ while true; do
             else
                 log_action "dnf-remove-packages.txt not found"
             fi
-            notify	"Software has been removed"
+            notify "Software has been removed"
             ;;
         10)
             echo "Installing XBOX drivers for wireless Controller with dongle"
