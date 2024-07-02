@@ -9,3 +9,5 @@ kaddressbook
 korganizer
 kwrite
 kcalc
+skanpage
+neochat
