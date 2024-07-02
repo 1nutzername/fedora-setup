@@ -106,38 +106,38 @@ while true; do
                 notify "Software has been installed"
             else
                 log_action "dnf-packages.txt not found"
-			fi
-			notify	"Software has been installed"
-			;;
-		6)
-		    echo "Installing Oh-My-Posh"
-		    mkdir $HOME/.config/omp
-		    cp omp_theme.toml $HOME/.config/omp/omp_theme.toml
-		    sudo dnf install -y zsh curl util-linux-user
-		    chsh -s "$which zsh"
-		    autoload -Uz zsh-newuser-install
-		    zsh-newuser-install -f
-		    curl -s https://ohmyposh.dev/install.sh | sudo bash -s
-		    echo 'eval "$(oh-my-posh init zsh --config $HOME/.config/omp/omp_theme.toml)"' >> ~/.zshrc
-		    oh-my-posh font install meslo
-		    notify "Oh-My-Posh is ready to rock n roll"
-		    ;;
-		7)
-		    echo "Installing Extras"
-		    sudo dnf groupupdate -y sound-and-video
-		    sudo dnf swap -y ffmpeg-free ffmpeg --allowerasing
-		    sudo dnf install -y libdvdcss
-		    sudo dnf install -y gstreamer1-plugins-{bad-\*,good-\*,ugly-\*,base} gstreamer1-libav --exclude=gstreamer1-plugins-bad-free-devel ffmpeg gstreamer-ffmpeg
-		    sudo dnf install -y lame\* --exclude=lame-devel
-		    sudo dnf group upgrade -y --with-optional Multimedia
-		    sudo dnf config-manager --set-enabled fedora-cisco-openh264
-		    sudo dnf install -y gstreamer1-plugin-openh264 mozilla-openh264
-		    sudo dnf copr enable peterwu/iosevka -y
-		    sudo dnf update -y
-		    sudo dnf install -y iosevka-term-fonts jetbrains-mono-fonts-all terminus-fonts terminus-fonts-console google-noto-fonts-common fira-code-fonts cabextract xorg-x11-font-utils fontconfig
-		    sudo rpm -i https://downloads.sourceforge.net/project/mscorefonts2/rpms/msttcore-fonts-installer-2.6-1.noarch.rpm
-		    notify "Extras has been installed"
-		    ;;
+            fi
+            notify	"Software has been installed"
+            ;;
+        6)
+            echo "Installing Oh-My-Posh"
+            mkdir $HOME/.config/omp
+            cp omp_theme.toml $HOME/.config/omp/omp_theme.toml
+            sudo dnf install -y zsh curl util-linux-user
+            chsh -s "$which zsh"
+            autoload -Uz zsh-newuser-install
+            zsh-newuser-install -f
+            curl -s https://ohmyposh.dev/install.sh | sudo bash -s
+            echo 'eval "$(oh-my-posh init zsh --config $HOME/.config/omp/omp_theme.toml)"' >> ~/.zshrc
+            oh-my-posh font install meslo
+            notify "Oh-My-Posh is ready to rock n roll"
+            ;;
+        7)
+            echo "Installing Extras"
+            sudo dnf groupupdate -y sound-and-video
+            sudo dnf swap -y ffmpeg-free ffmpeg --allowerasing
+            sudo dnf install -y libdvdcss
+            sudo dnf install -y gstreamer1-plugins-{bad-\*,good-\*,ugly-\*,base} gstreamer1-libav --exclude=gstreamer1-plugins-bad-free-devel ffmpeg gstreamer-ffmpeg
+            sudo dnf install -y lame\* --exclude=lame-devel
+            sudo dnf group upgrade -y --with-optional Multimedia
+            sudo dnf config-manager --set-enabled fedora-cisco-openh264
+            sudo dnf install -y gstreamer1-plugin-openh264 mozilla-openh264
+            sudo dnf copr enable peterwu/iosevka -y
+            sudo dnf update -y
+            sudo dnf install -y iosevka-term-fonts jetbrains-mono-fonts-all terminus-fonts terminus-fonts-console google-noto-fonts-common fira-code-fonts cabextract xorg-x11-font-utils fontconfig
+            sudo rpm -i https://downloads.sourceforge.net/project/mscorefonts2/rpms/msttcore-fonts-installer-2.6-1.noarch.rpm
+            notify "Extras has been installed"
+            ;;
         8)
             echo "Installing Nvidia Driver Akmod-Nvidia"
             sudo dnf install -y akmod-nvidia
@@ -151,33 +151,33 @@ while true; do
                 sudo dnf remove -y "$DNF_REMOVE_PACKAGES"
                 notify "Software has been installed"
             else
-			    log_action "dnf-remove-packages.txt not found"
-			fi
-			notify	"Software has been removed"
-			;;
-		10)
-		    echo "Installing XBOX drivers for wireless Controller with dongle"
-		    sudo dnf install -y dkms cabextract git-core
-		    cd ~/Downloads
-		    git clone https://github.com/medusalix/xone
-		    cd xone
-		    sudo ./install.sh
-		    sudo xone-get-firmware.sh
-		    cd ..
-		    rm -rf xone
-		    notify "XBOX Dongle drivers installed"
-		    ;;
-		11)
-		    echo "Setting up git"
-		    sudo dnf install -y git-core
-		    echo "Please enter user.name"
-		    read username
-		    echo "Please enter user.email"
-		    read email
-		    git config --global user.name "$username"
-		    git config --global user.email "$email"
-		    notify "Git is ready to go"
-		    ;;
+                log_action "dnf-remove-packages.txt not found"
+            fi
+            notify	"Software has been removed"
+            ;;
+        10)
+            echo "Installing XBOX drivers for wireless Controller with dongle"
+            sudo dnf install -y dkms cabextract git-core
+            cd ~/Downloads
+            git clone https://github.com/medusalix/xone
+            cd xone
+            sudo ./install.sh
+            sudo xone-get-firmware.sh
+            cd ..
+            rm -rf xone
+            notify "XBOX Dongle drivers installed"
+            ;;
+        11)
+            echo "Setting up git"
+            sudo dnf install -y git-core
+            echo "Please enter user.name"
+            read username
+            echo "Please enter user.email"
+            read email
+            git config --global user.name "$username"
+            git config --global user.email "$email"
+            notify "Git is ready to go"
+            ;;
         12) log_action "User chose to quit the script."; exit 0 ;;
         *) log_action "Invalid option selected: $CHOICE";;
     esac
