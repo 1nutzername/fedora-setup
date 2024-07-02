@@ -79,9 +79,9 @@ while true; do
             sudo fwupdmgr get-devices
             sudo fwupdmgr refresh --force
             sudo fwupdmgr get-updates
-			sudo fwupdmgr update
-			notify "System Firmware Updated"
-			;;
+            sudo fwupdmgr update
+            notify "System Firmware Updated"
+            ;;
         3)
             echo "Speeding Up DNF"
             echo 'max_parallel_downloads=10' | sudo tee -a /etc/dnf/dnf.conf
