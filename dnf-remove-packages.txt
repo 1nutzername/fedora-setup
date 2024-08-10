@@ -11,3 +11,4 @@ kwrite
 kcalc
 skanpage
 neochat
+akregator
