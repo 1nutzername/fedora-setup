@@ -6,6 +6,7 @@ org.mozilla.Thunderbird
 org.keepassxc.KeePassXC
 org.libreoffice.LibreOffice
 com.obsproject.Studio
+com.obsproject.Studio.Plugin.DroidCam
 com.synology.SynologyDrive
 com.vscodium.codium-insiders
 io.github.shiftey.Desktop
