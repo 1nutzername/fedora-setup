@@ -137,6 +137,7 @@ while true; do
             sudo dnf update -y
             sudo dnf install -y iosevka-term-fonts jetbrains-mono-fonts-all terminus-fonts terminus-fonts-console google-noto-fonts-common fira-code-fonts cabextract xorg-x11-font-utils fontconfig
             sudo rpm -i https://downloads.sourceforge.net/project/mscorefonts2/rpms/msttcore-fonts-installer-2.6-1.noarch.rpm
+            curl --proto '=https' --tlsv1.2 -LsSf https://setup.atuin.sh | sh
             
             notify "Extras has been installed"
             ;;
