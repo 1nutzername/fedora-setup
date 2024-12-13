@@ -25,5 +25,4 @@ flathub org.geany.Geany
 com.github.tchx84.Flatseal
 com.microsoft.Edge
 com.github.rafostar.Clapper
-com.emqx.MQTTX
 org.kicad.KiCad
